@@ -39,6 +39,45 @@ public class Player {
 		this.playerY = py;
 	}
 	
-	
+	/**
+	 * Gets the X position of the player
+	 * @return, the X position of the player
+	 */
+	public int getX() {
+		return this.playerX;
+	}
+
+	/**
+	 * Gets the Y position of the player
+	 * @return, the Y position of the player
+	 */
+	public int getY() {
+		return this.playerY;
+	}
+
+	/**
+	 * Moved the player object
+	 * @param dir, the direction to move the player
+	 */
+	public void move(MoveDirection dir) {
+		switch(dir) {
+		case DIRECTION_NORTH:
+			this.setY(this.getY() - 1);
+			break;
+		case DIRECTION_EAST:
+			this.setX(this.getX() + 1);
+			break;
+		case DIRECTION_SOUTH:
+			this.setY(this.getY() + 1);
+			break;
+		case DIRECTION_WEST:
+			this.setX(this.getX() - 1);
+			break;
+		}
+		
+		if(DataStorage.debugEnabled()) {
+			System.out.printf("[Player]: Moved [%s] to position [%d, %d]\n", dir.toString(), this.getY(), this.getX());
+		}
+	}
 	
 }
