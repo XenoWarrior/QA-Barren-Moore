@@ -35,7 +35,7 @@ public class GameBoard {
 					}
 				}*/
 				
-				boardRow.put(j, new BoardCell(CellItem.ITEM_NONE));
+				boardRow.put(j, new BoardCell(CellItem.ITEM_NON, j, i));
 			}
 			boardGrid.put(i, boardRow);
 		}
@@ -66,9 +66,9 @@ public class GameBoard {
 		if(boardGrid.containsKey(y)) {
 			
 			HashMap<Integer, BoardCell> boardRow = boardGrid.get(y);
-			if(boardRow.containsKey(x)) {
+			if(boardRow.containsKey((int)x)) {
 				if(DataStorage.debugEnabled()) {
-					System.out.printf("[GameBoard]: Getting cell [%d, %d], it has [%s] in it.\n", x, y, boardRow.get(x).getItem());
+					System.out.printf("[GameBoard]: Getting cell [y: %d, x: %d], it has [%s] in it.\n", x, y, boardRow.get(x).getItem());
 				}
 				return boardRow.get(x);
 			}
@@ -89,25 +89,78 @@ public class GameBoard {
 		}
 		else {
 			if(DataStorage.debugEnabled()) {
-				System.out.printf("[GameBoard]: Player has gone off the Y position into [%d, %d].\n", y, x);
-
-				// If we're going into -1 the board start
-				if(y < boardStartY) {
-					// We want to remove one from the end and cache it
-					this.cachedObjects.put(boardEndY, this.boardGrid.get(boardEndY));
-					this.boardGrid.remove(boardEndY);
-					this.boardEndY--;
-				}
-				
-				// If we're going into +1 the board end
-				if(y > boardEndY) {
-					// We want to remove one from the start and cache it
-					this.cachedObjects.put(boardStartY, this.boardGrid.get(boardStartY));
-					this.boardGrid.remove(boardStartY);
-					this.boardStartY++;
-				}
+				System.out.printf("[GameBoard]: Player has gone off the Y position into [y: %d, x: %d].\n", y, x);
 			}
+			// If we're going into -1 the board start
+			if(y < this.boardStartY) {
+				// Cache the row
+				this.cachedObjects.put(this.boardEndY, this.boardGrid.get(this.boardEndY));
+				this.boardGrid.remove(this.boardEndY);
 				
+				// Decrement
+				this.boardEndY--;
+				this.boardStartY--;
+				
+				// Check if the cached Y row exists
+				if(this.cachedObjects.containsKey(y)) {
+					// We want to add it directly back and keep everything it had before.
+					this.boardGrid.put(y, this.cachedObjects.get(y));
+					
+					System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardStartY);
+				}
+				else {
+					// Now make a new row at the end which starts from the startX to the endX into the new startY
+					HashMap<Integer, BoardCell> newRow = new HashMap<Integer, BoardCell>();
+					for(int i = this.boardStartX; i <= this.boardEndX; i++) {
+						newRow.put(i, new BoardCell(CellItem.ITEM_NON, i, this.boardStartY));
+					}
+					this.boardGrid.put(this.boardStartY, newRow);
+					
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Cached row [y: %d] and added new row at [y: %d], the new startY and endY are [sY: %d, eY: %d].\n", (this.boardEndY), this.boardStartY, this.boardStartY, this.boardEndY);
+					}
+				}
+				
+				// We can now return the new cell
+				return this.boardGrid.get(y).get(x);
+			}
+			
+			// If we're going into +1 the board end
+			if(y > this.boardEndY) {
+				
+				System.out.println("END Y: " + this.boardEndY);
+				
+				// Cache the row
+				this.cachedObjects.put(this.boardStartY, this.boardGrid.get(this.boardStartY));
+				this.boardGrid.remove(this.boardStartY);
+
+				// Increment
+				this.boardStartY++;
+				this.boardEndY++;
+				
+				// Check if the cached Y row exists
+				if(this.cachedObjects.containsKey(y)) {
+					// We want to add it directly back and keep everything it had before.
+					this.boardGrid.put(y, this.cachedObjects.get(y));
+					
+					System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardEndY);
+				}
+				else {
+					// Now make a new row at the end which starts from the startX to the endX into the new startY
+					HashMap<Integer, BoardCell> newRow = new HashMap<Integer, BoardCell>();
+					for(int i = this.boardStartX; i <= this.boardEndX; i++) {
+						newRow.put(i, new BoardCell(CellItem.ITEM_NON, i, this.boardEndY));
+					}
+					this.boardGrid.put(this.boardEndY, newRow);
+
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Cached row [y: %d] and added new row at [y: %d], the new startY and endY are [sY: %d, eY: %d].\n", (this.boardStartY), this.boardEndY, this.boardStartY, this.boardEndY);
+					}
+				}
+				
+				// We can now return the new cell
+				return this.boardGrid.get(y).get(x);
+			}
 		}
 
 		return null;
@@ -119,13 +172,13 @@ public class GameBoard {
 	public void printBoard() {
 		// Will only print if we have enabled debug messages
 		if(DataStorage.debugEnabled()) {
-			for(int i = boardStartY; i < boardGrid.size(); i++) {
-				for(int j = boardStartX; j < boardGrid.size(); j++) {
-					HashMap<Integer, BoardCell> row = boardGrid.get(i);
-					BoardCell cell = row.get(j);
-		
-					System.out.printf("[GameBoard]: The item at [%d, %d] is a cell with item [%s]\n", i, j, cell.getItem());
+			for(int i = this.boardStartY; i <= this.boardEndY; i++) {
+				HashMap<Integer, BoardCell> row = this.boardGrid.get(i);
+				for(int j = this.boardStartX; j <= this.boardEndX; j++) {
+					BoardCell c = row.get(j);
+					System.out.printf("[y: %d, x: %d, %s]", c.getY(), c.getX(), c.getItem());
 				}
+				System.out.println();
 			}
 		}
 	}

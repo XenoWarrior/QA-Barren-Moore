@@ -5,14 +5,21 @@ public class BoardCell {
 	/**
 	 * Variable definitions
 	 */
-	private CellItem cellItem = CellItem.ITEM_NONE;
+	private CellItem cellItem = CellItem.ITEM_NON;
+	private int cellX;
+	private int cellY;
 	
 	/**
 	 * Constructs a new cell for the board
 	 * @param ci, the item to put into the cell
+	 * @param cx, the cell X pos
+	 * @param cy, the cell Y pos
 	 */
-	public BoardCell (CellItem ci) {
+	public BoardCell (CellItem ci, int cx, int cy) {
 		this.cellItem = ci;
+
+		this.cellX = cx;
+		this.cellY = cy;
 	}
 	
 	/**
@@ -34,4 +41,37 @@ public class BoardCell {
 		
 		this.cellItem = ci;
 	}
+
+	/**
+	 * Sets the X position of this cell
+	 * @param x, the new X value
+	 */
+	public void setX(int x) {
+		this.cellX = x;
+	}
+	
+	/**
+	 * Sets the Y position of this cell
+	 * @param y, the new Y value
+	 */
+	public void setY(int y) {
+		this.cellY = y;
+	}
+	
+	/**
+	 * Gets the X position of this cell
+	 * @return int, the X pos
+	 */
+	public int getX() {
+		return this.cellX;
+	}
+	
+	/**
+	 * Gets the Y position of this cell
+	 * @return int, the Y pos
+	 */
+	public int getY() {
+		return this.cellY;
+	}
+	
 }
