@@ -3,6 +3,13 @@ package barrenmoore;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ * KNOWN ISSUES:
+ * 
+ * The X (left and right side) do not get restored properly and so items (such as enemies get forgotten on remove)
+ *
+ */
+
 public class GameBoard {
 
 	/**
@@ -121,9 +128,11 @@ public class GameBoard {
 						this.boardGrid.get(cY).put((this.boardStartX-1), new BoardCell(CellItem.ITEM_NON, cY, (this.boardStartX-1)));
 					}
 					this.cachedXObjects.put(this.boardEndX-1, theXValues);
-					
-					for(BoardCell c: theXValues.values()) {
-						System.out.println(c.getX() + " " + c.getY() + " " + c.getItem());
+
+					if(DataStorage.debugEnabled()) {
+						for(BoardCell c: theXValues.values()) {
+							System.out.println(c.getX() + " " + c.getY() + " " + c.getItem());
+						}
 					}
 
 					this.boardStartX--;

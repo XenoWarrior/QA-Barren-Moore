@@ -33,6 +33,11 @@ public class Client {
 		System.out.printf("[Step %d]: You awaken to find yourself in a barren moor. Try \"look\".\n", this.currentStep);
 
 		while(true) {
+			
+			if(this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY()) == 0) {
+				System.out.println("Game Over! You found the treasure after " + this.currentStep + " steps!");
+			}
+			
 			System.out.print(">> ");
 			
 			this.lastInput = this.inputReader.nextLine().toLowerCase();
