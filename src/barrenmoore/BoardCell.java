@@ -35,10 +35,6 @@ public class BoardCell {
 	 * @param i, the item to put into the cell
 	 */
 	public void setItem(CellItem ci) {
-		if(DataStorage.debugEnabled()) {
-			System.out.printf("[BoardCell]: Adding item [%s].\n", ci.toString());
-		}
-		
 		this.cellItem = ci;
 	}
 

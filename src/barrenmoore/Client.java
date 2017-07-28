@@ -20,17 +20,15 @@ public class Client {
 	 */
 	public void runGame() {
 		
-		DataStorage.toggleDebug(true);
+		//DataStorage.toggleDebug(true);
 		
-		this.gameBoard = new GameBoard(3);
+		this.gameBoard = new GameBoard(10);
 		this.gamePlayer = new Player(this.gameBoard.getBoard().size() / 2, this.gameBoard.getBoard().size() / 2);
 		this.inputReader = new Scanner(System.in);
 		this.lastInput = "";
 		
 		this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLY);
-		this.gameBoard.getCell(this.gamePlayer.getX()+1, this.gamePlayer.getY()).setItem(CellItem.ITEM_TRE);
 		this.gameBoard.printBoard();
-
 		
 		System.out.printf("[Step %d]: You awaken to find yourself in a barren moor. Try \"look\".\n", this.currentStep);
 
@@ -61,7 +59,7 @@ public class Client {
 					break;
 					
 				case 'r':
-					System.out.printf("[Step %d]: The watch-like device reads %d m.\n", this.currentStep, 0);
+					System.out.printf("[Step %d]: The watch-like device reads %d m.\n", this.currentStep, this.gameBoard.distanceFrom(CellItem.ITEM_TRE));
 					break;
 					
 				case 'n':
@@ -105,6 +103,7 @@ public class Client {
 				}
 				
 				this.gameBoard.printBoard();
+				System.out.printf("[Step %d]: Player pos [y: %d, x: %d].\n", this.currentStep, this.gamePlayer.getY(), this.gamePlayer.getX());
 			}
 		}
 	}
