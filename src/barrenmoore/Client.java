@@ -20,7 +20,14 @@ public class Client {
 	 * Initialises and starts the game
 	 */
 	public void runGame() {
-		
+
+		System.out.println("KNOWN ISSUES:");
+		System.out.println(" -> The X (left and right) sides do not get restored properly like the Y (top and bottom) sides.");
+		System.out.println("    This means that in some cases, you may see an error, but the game will continue to run regardless.");
+		System.out.println(" -> There is only one end goal treasure, but the system has been designed to allow more items initialised.");
+		System.out.println("    However, this is not shown in game as time has run out on development.");
+		System.out.println(" -> Ideally there will be one end goal, but there are enemies which make it harder to reach.\n\n");
+
 		DataStorage.toggleDebug(true);
 		
 		this.gameBoard = new GameBoard(10);

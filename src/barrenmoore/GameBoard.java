@@ -3,13 +3,6 @@ package barrenmoore;
 import java.util.HashMap;
 import java.util.Random;
 
-/**
- * KNOWN ISSUES:
- * 
- * The X (left and right side) do not get restored properly and so items (such as enemies get forgotten on remove)
- *
- */
-
 public class GameBoard {
 
 	/**
