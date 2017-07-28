@@ -28,7 +28,9 @@ public class Client {
 		this.lastInput = "";
 		
 		this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLY);
+		this.gameBoard.getCell(this.gamePlayer.getX()+1, this.gamePlayer.getY()).setItem(CellItem.ITEM_TRE);
 		this.gameBoard.printBoard();
+
 		
 		System.out.printf("[Step %d]: You awaken to find yourself in a barren moor. Try \"look\".\n", this.currentStep);
 
@@ -54,6 +56,7 @@ public class Client {
 					System.out.printf("[Step %d]: It has hands like a watch, but the hands don't seem to tell time.\n", this.currentStep);
 					System.out.printf("[Step %d]: Try \"north\", \"south\", \"east\", or \"west\".\n", this.currentStep);
 					System.out.printf("[Step %d]: When you move, try \"read\".\n", this.currentStep);
+					System.out.printf("[Step %d]: You can give up by using \"quit\".\n", this.currentStep);
 					this.currentStep++;
 					break;
 					
@@ -66,6 +69,7 @@ public class Client {
 					this.gamePlayer.move(MoveDirection.DIRECTION_NORTH);
 					this.currentStep++;
 					break;
+					
 				case 'e':
 					System.out.printf("[Step %d]: You moved east.\n", this.currentStep);
 					this.gamePlayer.move(MoveDirection.DIRECTION_EAST);

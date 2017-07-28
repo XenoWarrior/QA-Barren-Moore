@@ -127,9 +127,6 @@ public class GameBoard {
 			
 			// If we're going into +1 the board end
 			if(y > this.boardEndY) {
-				
-				System.out.println("END Y: " + this.boardEndY);
-				
 				// Cache the row
 				this.cachedObjects.put(this.boardStartY, this.boardGrid.get(this.boardStartY));
 				this.boardGrid.remove(this.boardStartY);
@@ -176,7 +173,8 @@ public class GameBoard {
 				HashMap<Integer, BoardCell> row = this.boardGrid.get(i);
 				for(int j = this.boardStartX; j <= this.boardEndX; j++) {
 					BoardCell c = row.get(j);
-					System.out.printf("[y: %d, x: %d, %s]", c.getY(), c.getX(), c.getItem());
+					//System.out.printf("[y: %d, x: %d, %s]", c.getY(), c.getX(), c.getItem());
+					System.out.printf("[%s]", c.getItem());
 				}
 				System.out.println();
 			}
