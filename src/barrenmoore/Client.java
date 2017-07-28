@@ -13,6 +13,7 @@ public class Client {
 	private String lastInput;
 	
 	private int currentStep = 1;
+	private double lastDistance = 0;
 	
 	/**
 	 * Entry point for the game itself
@@ -29,13 +30,15 @@ public class Client {
 		
 		this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLY);
 		this.gameBoard.printBoard();
+		this.lastDistance = this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY());
 		
 		System.out.printf("[Step %d]: You awaken to find yourself in a barren moor. Try \"look\".\n", this.currentStep);
-
+		
 		while(true) {
 			
-			if(this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY()) == 0) {
-				System.out.println("Game Over! You found the treasure after " + this.currentStep + " steps!");
+			if(((int)this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY())) == 0) {
+				System.out.println("Congratulations, you found the treasure in " + this.currentStep + " steps.");
+				System.exit(0);
 			}
 			
 			System.out.print(">> ");
@@ -46,7 +49,13 @@ public class Client {
 				char firstChar = this.lastInput.charAt(0);
 				
 				if(firstChar == 'n' || firstChar == 'e' || firstChar == 's' || firstChar == 'w') {
-					this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_NON);
+					BoardCell c = this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY());
+					if(c == null) {
+						System.out.println("Error occured with the replacement of a cached row, this is a known issue.");
+					}
+					else {
+						c.setItem(CellItem.ITEM_NON);
+					}
 				}
 				
 				switch(firstChar) {
@@ -103,7 +112,13 @@ public class Client {
 				}
 	
 				if(firstChar == 'n' || firstChar == 'e' || firstChar == 's' || firstChar == 'w') {
-					this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLY);
+					BoardCell c = this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY());
+					if(c == null) {
+						System.out.println("Error occured with the replacement of a cached row, this is a known issue.");
+					}
+					else {
+						c.setItem(CellItem.ITEM_PLY);
+					}
 				}
 				
 				this.gameBoard.printBoard();
@@ -112,6 +127,8 @@ public class Client {
 				if(DataStorage.debugEnabled()) {
 					System.out.printf("[Step %d]: Player pos [y: %d, x: %d].\n", this.currentStep, this.gamePlayer.getY(), this.gamePlayer.getX());
 				}
+				
+				this.lastDistance = this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY());
 			}
 		}
 	}
