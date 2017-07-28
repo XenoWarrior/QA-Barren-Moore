@@ -13,9 +13,7 @@ public class Client {
 	 */
 	
 	public void runGame() {
-		
 		this.gameBoard = new GameBoard(50);
-		
 	}
 	
 }
