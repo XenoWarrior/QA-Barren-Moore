@@ -20,7 +20,7 @@ public class Client {
 	 */
 	public void runGame() {
 		
-		//DataStorage.toggleDebug(true);
+		DataStorage.toggleDebug(true);
 		
 		this.gameBoard = new GameBoard(10);
 		this.gamePlayer = new Player(this.gameBoard.getBoard().size() / 2, this.gameBoard.getBoard().size() / 2);
@@ -55,11 +55,10 @@ public class Client {
 					System.out.printf("[Step %d]: Try \"north\", \"south\", \"east\", or \"west\".\n", this.currentStep);
 					System.out.printf("[Step %d]: When you move, try \"read\".\n", this.currentStep);
 					System.out.printf("[Step %d]: You can give up by using \"quit\".\n", this.currentStep);
-					this.currentStep++;
 					break;
 					
 				case 'r':
-					System.out.printf("[Step %d]: The watch-like device reads %d m.\n", this.currentStep, this.gameBoard.distanceFrom(CellItem.ITEM_TRE));
+					System.out.printf("[Step %d]: The watch-like device reads %f m.\n", this.currentStep, this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY()));
 					break;
 					
 				case 'n':
@@ -103,7 +102,11 @@ public class Client {
 				}
 				
 				this.gameBoard.printBoard();
-				System.out.printf("[Step %d]: Player pos [y: %d, x: %d].\n", this.currentStep, this.gamePlayer.getY(), this.gamePlayer.getX());
+				System.out.printf("[Step %d]: The watch-like device reads %f m.\n", this.currentStep, this.gameBoard.distanceFrom(CellItem.ITEM_TRE, this.gamePlayer.getX(), this.gamePlayer.getY()));
+				
+				if(DataStorage.debugEnabled()) {
+					System.out.printf("[Step %d]: Player pos [y: %d, x: %d].\n", this.currentStep, this.gamePlayer.getY(), this.gamePlayer.getX());
+				}
 			}
 		}
 	}

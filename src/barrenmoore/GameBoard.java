@@ -49,6 +49,8 @@ public class GameBoard {
 		int highValue = (boardGrid.size()*2);
 		int lowValue = 0 - (boardGrid.size()*2);
 		
+		int treasureX = 0;
+		
 		if(DataStorage.debugEnabled()) {
 			System.out.printf("[GameBoard]: low->high = [%d, %d].\n", lowValue, highValue);
 		}
@@ -87,10 +89,10 @@ public class GameBoard {
 	 * @throws Exception if no cell was found in that index
 	 */
 	public BoardCell getCell(int x, int y) {
-		if(boardGrid.containsKey(y)) {
+		if(this.boardGrid.containsKey(y)) {
 			
-			HashMap<Integer, BoardCell> boardRow = boardGrid.get(y);
-			if(boardRow.containsKey((int)x)) {
+			HashMap<Integer, BoardCell> boardRow = this.boardGrid.get(y);
+			if(boardRow.containsKey(x)) {
 				if(DataStorage.debugEnabled()) {
 					System.out.printf("[GameBoard]: Getting cell [y: %d, x: %d], it has [%s] in it.\n", x, y, boardRow.get(x).getItem());
 				}
@@ -101,14 +103,68 @@ public class GameBoard {
 				if(x < boardStartX) {
 					// We want to remove one from the end and cache it
 					// In this case, we need to cache every cell on the X from each Y
-					System.out.printf("[GameBoard]: Player has gone off the X (into negative) position into [y: %d, x: %d].\n", y, x);
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Player has gone off the X (into negative) position into [y: %d, x: %d].\n", y, x);
+					}
+					
+					// if we go into negative, we need add a new row of X cells to the left hand side of the board and remove the right hand side.
+					HashMap<Integer, BoardCell> theXValues = new HashMap<Integer, BoardCell>();
+					for(int cY = this.boardStartY; cY <= this.boardEndY; cY++) {
+						// Get the row
+						HashMap<Integer, BoardCell> row = this.boardGrid.get(cY);
+						
+						// Put the cell into the cache and remove it from the current
+						theXValues.put(cY, row.get(this.boardEndX));
+						this.boardGrid.get(cY).remove(this.boardEndX);
+						
+						// Put the new index X into the current
+						this.boardGrid.get(cY).put((this.boardStartX-1), new BoardCell(CellItem.ITEM_NON, cY, (this.boardStartX-1)));
+					}
+					this.cachedXObjects.put(this.boardEndX-1, theXValues);
+					
+					for(BoardCell c: theXValues.values()) {
+						System.out.println(c.getX() + " " + c.getY() + " " + c.getItem());
+					}
+
+					this.boardStartX--;
+					this.boardEndX--;
+					
+					return this.boardGrid.get(y).get(this.boardStartX);
 				}
 				
 				// If we're going into +1 the board end
 				if(x > boardEndX) {
 					// We want to remove one from the start and cache it
 					// In this case, we need to cache every cell on the X from each Y
-					System.out.printf("[GameBoard]: Player has gone off the X (into positive) position into [y: %d, x: %d].\n", y, x);
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Player has gone off the X (into positive) position into [y: %d, x: %d].\n", y, x);
+					}
+					
+					// If we go into positive, we need to add a new row of X cells to the right hand side of the board and remove the left hand side.
+					HashMap<Integer, BoardCell> theXValues = new HashMap<Integer, BoardCell>();
+					for(int cY = this.boardStartY; cY <= this.boardEndY; cY++) {
+						// Get the row
+						HashMap<Integer, BoardCell> row = this.boardGrid.get(cY);
+						
+						// Put the cell into the cache and remove it from the current
+						theXValues.put(cY, row.get(this.boardStartX));
+						this.boardGrid.get(cY).remove(this.boardStartX);
+						
+						// Put the new index X into the current
+						this.boardGrid.get(cY).put((this.boardEndX+1), new BoardCell(CellItem.ITEM_NON, cY, (this.boardEndX+1)));
+					}
+					this.cachedXObjects.put(this.boardStartX, theXValues);
+					
+					if(DataStorage.debugEnabled()) {
+						for(BoardCell c: theXValues.values()) {
+							System.out.println(c.getX() + " " + c.getY() + " " + c.getItem());
+						}
+					}
+
+					this.boardStartX++;
+					this.boardEndX++;
+					
+					return this.boardGrid.get(y).get(this.boardEndX);
 				}
 			}
 			
@@ -131,8 +187,10 @@ public class GameBoard {
 				if(this.cachedYObjects.containsKey(y)) {
 					// We want to add it directly back and keep everything it had before.
 					this.boardGrid.put(y, this.cachedYObjects.get(y));
-					
-					System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardStartY);
+
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardStartY);
+					}
 				}
 				else {
 					// Now make a new row at the end which starts from the startX to the endX into the new startY
@@ -165,8 +223,10 @@ public class GameBoard {
 				if(this.cachedYObjects.containsKey(y)) {
 					// We want to add it directly back and keep everything it had before.
 					this.boardGrid.put(y, this.cachedYObjects.get(y));
-					
-					System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardEndY);
+
+					if(DataStorage.debugEnabled()) {
+						System.out.printf("[GameBoard]: Found cached row at [%d] and added it back to [%d].\n", y, this.boardEndY);
+					}
 				}
 				else {
 					// Now make a new row at the end which starts from the startX to the endX into the new startY
@@ -186,7 +246,7 @@ public class GameBoard {
 			}
 		}
 
-		return null;
+		return this.boardGrid.get(y).get(x);
 	}
 	
 	/**
@@ -218,7 +278,12 @@ public class GameBoard {
 	/**
 	 * This method will find the first available type of item and calculate the distance to it
 	 */
-	public double distanceFrom(CellItem i) {
+	public double distanceFrom(CellItem i, int pX, int pY) {
+		
+		if(i == CellItem.ITEM_TRE) {
+			return Math.sqrt((pX-this.treasureX)*(pX-this.treasureX) + (pY-this.treasureY)*(pY-this.treasureY));
+		}
+		
 		return 0;
 	}
 	
