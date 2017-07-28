@@ -10,4 +10,22 @@ public class DataStorage {
 	private static int chanceBonus = 40;
 	private static int chanceTreasure = 20;
 	
+	private static boolean printDebug = true;
+
+	/**
+	 * Returns if the game should show debug messages
+	 * @return boolean
+	 */
+	public static boolean debugEnabled() {
+		return DataStorage.printDebug;
+	}
+	
+	/**
+	 * Toggles the display of debug messages
+	 */
+	public static void toggleDebug() {
+		DataStorage.printDebug = !DataStorage.printDebug;
+		System.out.printf("[DataStorage]: Debug has been %s\n", (DataStorage.debugEnabled())  ?  "enabled" : "disabled");
+	}
+	
 }
