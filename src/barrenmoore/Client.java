@@ -20,21 +20,14 @@ public class Client {
 	 */
 	public void runGame() {
 		
-		//DataStorage.toggleDebug(true);
+		DataStorage.toggleDebug(true);
 		
 		this.gameBoard = new GameBoard(10);
 		this.gamePlayer = new Player(this.gameBoard.getBoard().size() / 2, this.gameBoard.getBoard().size() / 2);
 		this.inputReader = new Scanner(System.in);
 		this.lastInput = "";
 		
-		try {
-			BoardCell c = this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY());
-			c.setItem(CellItem.ITEM_PLAYER);
-		}
-		catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-		
+		this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLAYER);
 		this.gameBoard.printBoard();
 		
 		System.out.printf("[Step %d]: You awaken to find yourself in a barren moor. Try \"look\".\n", this.currentStep);
@@ -45,7 +38,12 @@ public class Client {
 			this.lastInput = this.inputReader.nextLine().toLowerCase();
 			char firstChar = this.lastInput.charAt(0);
 			
+			if(firstChar == 'n' || firstChar == 'e' || firstChar == 's' || firstChar == 'w') {
+				this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_NONE);
+			}
+			
 			switch(firstChar) {
+			
 			case 'l': 
 				System.out.printf("[Step %d]: Grey foggy clouds float oppressively close to you,\n", this.currentStep);
 				System.out.printf("[Step %d]: reflected in the murky grey water which reaches up your shins.\n", this.currentStep);
@@ -56,11 +54,13 @@ public class Client {
 				System.out.printf("[Step %d]: When you move, try \"read\".\n", this.currentStep);
 				this.currentStep++;
 				break;
+				
 			case 'r':
 				System.out.printf("[Step %d]: The watch-like device reads %d m.\n", this.currentStep, 0);
 				break;
+				
 			case 'n':
-				System.out.printf("[Step %d]: You move north.\n", this.currentStep);
+				System.out.printf("[Step %d]: You move north.\n", this.currentStep);	
 				this.gamePlayer.move(MoveDirection.DIRECTION_NORTH);
 				this.currentStep++;
 				break;
@@ -69,21 +69,36 @@ public class Client {
 				this.gamePlayer.move(MoveDirection.DIRECTION_EAST);
 				this.currentStep++;
 				break;
+				
 			case 's':
 				System.out.printf("[Step %d]: You move south.\n", this.currentStep);
 				this.gamePlayer.move(MoveDirection.DIRECTION_SOUTH);
 				this.currentStep++;
 				break;
+				
 			case 'w':
 				System.out.printf("[Step %d]: You move west.\n", this.currentStep);
 				this.gamePlayer.move(MoveDirection.DIRECTION_WEST);
 				this.currentStep++;
 				break;
+			
+			case 'q':
+				System.out.printf("[Step %d]: You decide to give up, the monsters in the world move to devour you.\n", this.currentStep);
+				System.out.printf("[Step %d]: It won't be long before you become food.\n", this.currentStep);
+				System.exit(0);
+				break;
+				
+				
 			default:
 				System.out.printf("[Step %d]: You sit in the swamp, unable to decide what to do. (command not found [%s])\n", this.currentStep, this.lastInput);
 				break;
 			}
+
+			if(firstChar == 'n' || firstChar == 'e' || firstChar == 's' || firstChar == 'w') {
+				this.gameBoard.getCell(this.gamePlayer.getX(), this.gamePlayer.getY()).setItem(CellItem.ITEM_PLAYER);
+			}
 			
+			this.gameBoard.printBoard();
 		}
 	}
 	
