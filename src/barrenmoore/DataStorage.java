@@ -23,9 +23,11 @@ public class DataStorage {
 	/**
 	 * Toggles the display of debug messages
 	 */
-	public static void toggleDebug() {
+	public static void toggleDebug(boolean silent) {
 		DataStorage.printDebug = !DataStorage.printDebug;
-		System.out.printf("[DataStorage]: Debug has been %s\n", (DataStorage.debugEnabled())  ?  "enabled" : "disabled");
+		
+		if(!silent)
+			System.out.printf("[DataStorage]: Debug has been %s\n", (DataStorage.debugEnabled())  ?  "enabled" : "disabled");
 	}
 	
 }
